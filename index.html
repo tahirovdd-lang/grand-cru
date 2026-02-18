@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>GRAND CRU — Дистрибуция</title>
+<title>GRAND CRU — FINE WINE &amp; SPIRITS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
@@ -73,8 +73,6 @@ body{
   letter-spacing:1.6px;
   line-height:1.15;
 }
-.brand-phone{margin-top:6px;display:flex;flex-direction:column;gap:2px;}
-.brand-phone a{color:#fff;text-decoration:none;font-size:14px;font-weight:800;opacity:.95;}
 
 /* приветствие */
 .welcome{
@@ -88,28 +86,29 @@ body{
   background:rgba(0,0,0,.10);
 }
 
-/* header actions smaller */
+/* header actions: bigger + centered on right */
 .header-actions{
-  position:absolute;right:8px;top:12px;bottom:12px;
-  display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;
+  position:absolute;right:10px;top:0;bottom:0;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-end;
+  gap:10px;
   z-index:90;
 }
 .act-btn{
-  width:32px;height:32px;border-radius:12px;
+  width:42px;height:42px;border-radius:16px;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;user-select:none;
   background:rgba(255,255,255,.95);
   border:1px solid rgba(255,255,255,.65);
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.50), 0 8px 18px rgba(0,0,0,.14);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.50), 0 10px 20px rgba(0,0,0,.16);
   transition:.15s;
 }
 .act-btn:active{transform:scale(.97);}
-.burger{width:18px;height:12px;position:relative;}
-.burger span{position:absolute;left:0;right:0;height:2.6px;border-radius:10px;background:#1b1b1b;opacity:.9;}
+.burger{width:20px;height:14px;position:relative;}
+.burger span{position:absolute;left:0;right:0;height:2.8px;border-radius:10px;background:#1b1b1b;opacity:.9;}
 .burger span:nth-child(1){top:0;}
-.burger span:nth-child(2){top:4.8px;}
+.burger span:nth-child(2){top:5.4px;}
 .burger span:nth-child(3){bottom:0;}
-.act-ico{font-size:14px;line-height:1;color:#1b1b1b;}
+.act-ico{font-size:18px;line-height:1;color:#1b1b1b;}
 
 /* rows */
 .langs{
@@ -427,7 +426,6 @@ textarea.input{height:90px;}
 }
 
 @media (max-width:520px){
-  /* на телефоне — всё равно красиво, но описание будет ниже картинки */
   .img-modal-content{flex-direction:column;}
   .img-modal-left{border-right:none;border-bottom:1px solid rgba(0,0,0,.08);}
   .img-modal-img{max-height:52vh;}
@@ -444,7 +442,6 @@ textarea.input{height:90px;}
   .header img{width:76px;height:76px;left:10px;}
   .brand-title{font-size:26px;}
   .brand-title2{font-size:12px;letter-spacing:1.3px;}
-  .brand-phone a{font-size:13px;}
   .btn{min-width:108px;padding:12px 16px;}
   .cat-btn{min-width:126px;padding:12px 16px;font-size:13px;}
   .langs .btn{min-width:86px;padding:10px 10px;font-size:13px;}
@@ -462,15 +459,10 @@ textarea.input{height:90px;}
 
   <div class="brand-wrap">
     <div class="brand-title">GRAND CRU</div>
-    <div class="brand-title2" id="brandSub">ALCO DISTRIBUTION</div>
+    <!-- ✅ Убрано "Дистрибьюция алкогольной продукции" и телефоны. -->
+    <div class="brand-title2" id="brandSub">FINE WINE &amp; SPIRITS</div>
 
     <div class="welcome" id="welcomeLine" style="display:none;"></div>
-
-    <div class="brand-phone">
-      <!-- ✅ поменяй телефоны при необходимости -->
-      <a href="tel:+998900001122" onclick="callPhone(event)">+998 90 000 11 22</a>
-      <a href="tel:+998910003344" onclick="callPhone2(event)">+998 91 000 33 44</a>
-    </div>
   </div>
 
   <div class="header-actions">
@@ -519,24 +511,25 @@ textarea.input{height:90px;}
         <div style="height:12px;"></div>
 
         <div style="font-weight:900; margin-bottom:6px;" id="mLegalPhone">📞 Телефон</div>
-        <a href="tel:+998900001122" onclick="callPhone(event)" style="text-decoration:none; font-weight:900; color:#8B0E13;" id="mLegalPhoneNum">
-          +998 90 000 11 22
+        <a href="tel:+998937460022" onclick="callPhone(event)" style="text-decoration:none; font-weight:900; color:#8B0E13;" id="mLegalPhoneNum">
+          +998 (93) 746-00-22
         </a>
 
         <div style="height:12px;"></div>
 
+        <!-- ✅ Активирована кнопка "Связаться с менеджером" (ADMIN_ID=6013591658) -->
         <button class="btn" style="width:100%; min-width:auto;" onclick="openManagerChat(event)" id="mLegalChatBtn">
-          💬 Чат с менеджером
+          💬 Связаться с менеджером
         </button>
       </div>
     </div>
 
-    <a class="menu-item" href="tel:+998900001122" onclick="closeTopMenu()">
+    <a class="menu-item" href="tel:+998937460022" onclick="callPhone(event)">
       <div class="menu-left">
         <div class="menu-ic">📞</div>
         <div class="menu-txt">
           <div class="menu-name" id="mCallTitle">Позвонить</div>
-          <div class="menu-sub" id="mCallSub">+998 90 000 11 22</div>
+          <div class="menu-sub" id="mCallSub">+998 (93) 746-00-22</div>
         </div>
       </div>
       <div class="menu-right">›</div>
@@ -550,7 +543,7 @@ textarea.input{height:90px;}
           </svg>
         </div>
         <div class="menu-txt">
-          <div class="menu-name" id="mInstaTitle">@grandcru</div>
+          <div class="menu-name" id="mInstaTitle">@grandcru.campus</div>
           <div class="menu-sub" id="mInstaSub">Открыть Instagram</div>
         </div>
       </div>
@@ -579,11 +572,8 @@ textarea.input{height:90px;}
 
         <div style="font-weight:900; margin-bottom:6px;" id="aboutPhoneLabel">📞 Телефон</div>
         <div style="display:flex; flex-direction:column; gap:6px;">
-          <a href="tel:+998900001122" onclick="callPhone(event)" style="text-decoration:none; font-weight:900; color:#8B0E13;">
-            +998 90 000 11 22
-          </a>
-          <a href="tel:+998910003344" onclick="callPhone2(event)" style="text-decoration:none; font-weight:900; color:#8B0E13;">
-            +998 91 000 33 44
+          <a href="tel:+998937460022" onclick="callPhone(event)" style="text-decoration:none; font-weight:900; color:#8B0E13;">
+            +998 (93) 746-00-22
           </a>
         </div>
 
@@ -695,8 +685,8 @@ window.addEventListener('resize', ()=>setTimeout(syncStickyHeight, 50), {passive
 window.addEventListener('orientationchange', ()=>setTimeout(syncStickyHeight, 250), {passive:true});
 
 /* ✅ ссылки/настройки */
-const INSTA_URL = "https://www.instagram.com/grandcru/";
-const ADMIN_ID = 6013591658; // если нужно — поменяй
+const INSTA_URL = "https://www.instagram.com/grandcru.campus/";
+const ADMIN_ID = 6013591658; // ✅ Связаться с менеджером
 
 /* Telegram user */
 const tgUser = Telegram.WebApp.initDataUnsafe?.user || {};
@@ -707,7 +697,7 @@ const tg_id = tgUser.id || "";
 /* UI translations */
 const UI = {
   ru:{
-    brandSub:'ДИСТРИБУЦИЯ АЛКОГОЛЬНОЙ ПРОДУКЦИИ',
+    brandSub:'FINE WINE & SPIRITS',
     menu:'Меню',
     aboutTitle:'О компании',
     aboutSub:'Контакты, график, информация',
@@ -718,7 +708,7 @@ const UI = {
     legalSub:'Контакты для договоров / счетов',
     legalMail:'✉️ Почта',
     legalPhone:'📞 Телефон',
-    legalChat:'💬 Чат с менеджером',
+    legalChat:'💬 Связаться с менеджером',
     callTitle:'Позвонить',
     instaSub:'Открыть Instagram',
     searchResults:'Результаты поиска',
@@ -738,7 +728,7 @@ const UI = {
     price:'Цена'
   },
   uz:{
-    brandSub:'ALKOGOL MAHSULOTLARI DISTRIBYUTERI',
+    brandSub:'FINE WINE & SPIRITS',
     menu:'Menyu',
     aboutTitle:'Kompaniya haqida',
     aboutSub:'Kontaktlar, ish vaqti, ma’lumot',
@@ -749,7 +739,7 @@ const UI = {
     legalSub:"Shartnoma / hisob uchun kontaktlar",
     legalMail:'✉️ Pochta',
     legalPhone:'📞 Telefon',
-    legalChat:'💬 Menejer bilan chat',
+    legalChat:'💬 Menejer bilan bog‘lanish',
     callTitle:"Qo'ng'iroq qilish",
     instaSub:"Instagramni ochish",
     searchResults:'Qidiruv natijalari',
@@ -769,7 +759,7 @@ const UI = {
     price:'Narx'
   },
   en:{
-    brandSub:'ALCOHOL DISTRIBUTION',
+    brandSub:'FINE WINE & SPIRITS',
     menu:'Menu',
     aboutTitle:'About company',
     aboutSub:'Contacts, hours, info',
@@ -780,7 +770,7 @@ const UI = {
     legalSub:'Contacts for contracts / invoices',
     legalMail:'✉️ Email',
     legalPhone:'📞 Phone',
-    legalChat:'💬 Chat with manager',
+    legalChat:'💬 Contact manager',
     callTitle:'Call',
     instaSub:'Open Instagram',
     searchResults:'Search results',
@@ -862,10 +852,8 @@ function mkBeer(id, name, vol, abv, price){
     p: Number(price)||0,
     vol: String(vol||''),
     abv: String(abv||''),
-    // ✅ фото: images/<id>.jpg
     img: `images/${id}.jpg`,
     n: {ru:name, uz:name, en:name},
-    // ✅ короткое описание (покажется справа)
     desc: {
       ru: `Категория: ${UI.ru.beer} / ${subcatRuGuess(id)}.\n${UI.ru.metaPrefix}: ${vol} • ${abv}.\n\nДобавьте в корзину и отправьте заявку — менеджер подтвердит наличие и условия.`,
       uz: `Kategoriya: ${UI.uz.beer} / ${subcatUzGuess(id)}.\n${UI.uz.metaPrefix}: ${vol} • ${abv}.\n\nSavatga qo‘shing va so‘rov yuboring — menejer tasdiqlaydi.`,
@@ -874,7 +862,6 @@ function mkBeer(id, name, vol, abv, price){
   };
 }
 
-/* простые подсказки для описания по id */
 function subcatRuGuess(id){
   if(id.startsWith('draft_')) return 'Разливное';
   if(id.includes('_0_0') || id.includes('alcohol_free')) return 'Безалкогольное';
@@ -891,7 +878,6 @@ function subcatEnGuess(id){
   return UI.en.bottled;
 }
 
-/* index */
 const ITEM_INDEX = {};
 for(const catKey in MENU){
   const subObj = MENU[catKey] || {};
@@ -900,12 +886,10 @@ for(const catKey in MENU){
   }
 }
 
-/* helpers */
 function escapeHtml(s){return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function nameOf(id){const it = ITEM_INDEX[id]; return (it && it.n && (it.n[lang] || it.n.ru)) ? (it.n[lang] || it.n.ru) : id;}
 function formatSum(x){const n = Number(x) || 0; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
 
-/* приветствие */
 function renderWelcome(){
   const el = document.getElementById('welcomeLine');
   if(!el) return;
@@ -915,7 +899,6 @@ function renderWelcome(){
   el.innerText = `${UI[lang].welcome}, ${name}!`;
 }
 
-/* apply UI texts */
 function applyUI(){
   document.getElementById('brandSub').innerText = UI[lang].brandSub;
 
@@ -952,10 +935,10 @@ function applyUI(){
   const d = document.getElementById('aboutDescText');
   if(d){
     d.innerHTML = (lang==='ru')
-      ? `GRAND CRU — дистрибьютер алкогольной продукции.<br><br><b>Как оформить заявку:</b><br>1) Выберите подкатегорию<br>2) Добавьте позиции в корзину<br>3) Нажмите “${UI[lang].order}”<br><br><span class="muted">*Цены указаны в сумах.</span>`
+      ? `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>Как оформить заявку:</b><br>1) Выберите подкатегорию<br>2) Добавьте позиции в корзину<br>3) Нажмите “${UI[lang].order}”<br><br><span class="muted">*Цены указаны в сумах.</span>`
       : (lang==='uz')
-      ? `GRAND CRU — alkogol mahsulotlari distribyuteri.<br><br><b>So‘rov yuborish:</b><br>1) Kategoriyani tanlang<br>2) Savatga qo‘shing<br>3) “${UI[lang].order}” tugmasini bosing<br><br><span class="muted">*Narxlar so‘mda.</span>`
-      : `GRAND CRU — alcohol distributor.<br><br><b>How to request:</b><br>1) Choose subcategory<br>2) Add items to cart<br>3) Press “${UI[lang].order}”<br><br><span class="muted">*Prices are in UZS.</span>`;
+      ? `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>So‘rov yuborish:</b><br>1) Kategoriyani tanlang<br>2) Savatga qo‘shing<br>3) “${UI[lang].order}” tugmasini bosing<br><br><span class="muted">*Narxlar so‘mda.</span>`
+      : `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>How to request:</b><br>1) Choose subcategory<br>2) Add items to cart<br>3) Press “${UI[lang].order}”<br><br><span class="muted">*Prices are in UZS.</span>`;
   }
 
   renderWelcome();
@@ -966,20 +949,16 @@ function applyUI(){
   setTimeout(syncStickyHeight, 50);
 }
 
-/* header actions */
 function openTopMenu(){ closeSearch(); menuBackdrop.classList.add('show'); menuSheet.classList.add('show'); }
 function closeTopMenu(){ menuBackdrop.classList.remove('show'); menuSheet.classList.remove('show'); }
 
-/* phones */
-function callPhone(e){ try{e.preventDefault();e.stopPropagation();}catch(_){}
-  const url="tel:+998900001122";
+function callPhone(e){
+  try{e.preventDefault();e.stopPropagation();}catch(_){}
+  const url="tel:+998937460022";
   try{Telegram.WebApp.openLink(url);}catch(_){window.location.href=url;}
 }
-function callPhone2(e){ try{e.preventDefault();e.stopPropagation();}catch(_){}
-  const url="tel:+998910003344";
-  try{Telegram.WebApp.openLink(url);}catch(_){window.location.href=url;}
-}
-function openMail(e){ try{e.preventDefault();e.stopPropagation();}catch(_){}
+function openMail(e){
+  try{e.preventDefault();e.stopPropagation();}catch(_){}
   const url="mailto:grandcru.sales@example.com";
   try{Telegram.WebApp.openLink(url);}catch(_){window.location.href=url;}
 }
@@ -1146,14 +1125,13 @@ function renderProducts(){
   }
 }
 
-/* image modal (right description) */
+/* image modal */
 function openImage(e,id){
   try{e.preventDefault();e.stopPropagation();}catch(_){}
   const it=ITEM_INDEX[id];
   if(!it) return;
 
   imgModalTitle.innerText = nameOf(id);
-
   imgModalImg.src = it.img || 'images/logo.png';
   imgModalImg.onerror=function(){this.onerror=null;this.src='images/logo.png';};
 
@@ -1283,7 +1261,6 @@ function setLang(l,btn){
   applyUI();
 }
 
-/* subcat name helper */
 function subcatNameLang(key){
   if(key==='bottled') return UI[lang].bottled;
   if(key==='nonalc') return UI[lang].nonalc;
@@ -1301,7 +1278,6 @@ renderCats();
 renderSubcatsGrid();
 renderProducts();
 
-/* default RU */
 lang='ru';
 document.querySelectorAll('.langs .btn').forEach(b=>b.classList.remove('active'));
 document.getElementById('langRU')?.classList.add('active');
@@ -1313,4 +1289,3 @@ closeSearch();
 </script>
 </body>
 </html>
-
