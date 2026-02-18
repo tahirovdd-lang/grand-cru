@@ -86,7 +86,7 @@ body{
   background:rgba(0,0,0,.10);
 }
 
-/* header actions: bigger + centered on right */
+/* header actions */
 .header-actions{
   position:absolute;right:10px;top:0;bottom:0;
   display:flex;flex-direction:column;justify-content:center;align-items:flex-end;
@@ -229,7 +229,7 @@ textarea.input{height:90px;}
   color:#1d1d1d;
 }
 
-/* ✅ image modal with description on right */
+/* image modal */
 .img-modal{
   position:fixed; inset:0;
   background:rgba(0,0,0,.62);
@@ -296,11 +296,13 @@ textarea.input{height:90px;}
   font-weight:900;
   color:#8B0E13;
   margin-bottom:10px;
+  white-space:pre-line;
 }
 .img-desc-text{
   font-weight:800;
   opacity:.9;
   line-height:1.28;
+  white-space:pre-line;
 }
 .img-desc-chiprow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
 .chip{
@@ -454,14 +456,11 @@ textarea.input{height:90px;}
 <body>
 
 <div class="header">
-  <!-- ✅ Логотип: положи в images/logo.png -->
   <img src="images/logo.png" onerror="this.src='logo.png'" alt="GRAND CRU logo">
 
   <div class="brand-wrap">
     <div class="brand-title">GRAND CRU</div>
-    <!-- ✅ Убрано "Дистрибьюция алкогольной продукции" и телефоны. -->
     <div class="brand-title2" id="brandSub">FINE WINE &amp; SPIRITS</div>
-
     <div class="welcome" id="welcomeLine" style="display:none;"></div>
   </div>
 
@@ -488,7 +487,6 @@ textarea.input{height:90px;}
 
   <div class="menu-list">
 
-    <!-- Юр.лицам -->
     <div class="menu-item" onclick="toggleLegal()" role="button">
       <div class="menu-left">
         <div class="menu-ic">🏢</div>
@@ -517,7 +515,6 @@ textarea.input{height:90px;}
 
         <div style="height:12px;"></div>
 
-        <!-- ✅ Активирована кнопка "Связаться с менеджером" (ADMIN_ID=6013591658) -->
         <button class="btn" style="width:100%; min-width:auto;" onclick="openManagerChat(event)" id="mLegalChatBtn">
           💬 Связаться с менеджером
         </button>
@@ -589,7 +586,7 @@ textarea.input{height:90px;}
   </div>
 </div>
 
-<!-- ✅ sheet: подкатегории пива -->
+<!-- sheet: подкатегории пива -->
 <div class="sheet-backdrop" id="subcatBackdrop" onclick="closeSubcats()"></div>
 <div class="sheet" id="subcatSheet">
   <div class="sheet-handle"></div>
@@ -608,7 +605,7 @@ textarea.input{height:90px;}
   <div class="search-clear" onclick="clearSearch()" title="Очистить">✖</div>
 </div>
 
-<!-- ✅ языки RU / UZ / EN -->
+<!-- языки RU / UZ / EN -->
 <div class="langs">
   <button class="btn" id="langRU" onclick="setLang('ru',this)"><span class="lang-flag">🇷🇺</span>RU</button>
   <button class="btn" id="langUZ" onclick="setLang('uz',this)"><span class="lang-flag">🇺🇿</span>UZ</button>
@@ -633,7 +630,7 @@ textarea.input{height:90px;}
 
 <div class="popup" id="popup"><div class="popup-box" id="popupText">✅</div></div>
 
-<!-- ✅ modal image + description on right -->
+<!-- modal image + description -->
 <div class="img-modal" id="imgModal" onclick="closeImgModal(event)">
   <div class="img-modal-box" onclick="event.stopPropagation()">
     <div class="img-modal-top">
@@ -684,9 +681,9 @@ function syncStickyHeight(){
 window.addEventListener('resize', ()=>setTimeout(syncStickyHeight, 50), {passive:true});
 window.addEventListener('orientationchange', ()=>setTimeout(syncStickyHeight, 250), {passive:true});
 
-/* ✅ ссылки/настройки */
+/* ссылки/настройки */
 const INSTA_URL = "https://www.instagram.com/grandcru.campus/";
-const ADMIN_ID = 6013591658; // ✅ Связаться с менеджером
+const ADMIN_ID = 6013591658;
 
 /* Telegram user */
 const tgUser = Telegram.WebApp.initDataUnsafe?.user || {};
@@ -725,7 +722,8 @@ const UI = {
     nonalc:'Безалкогольное',
     draft:'Разливное',
     metaPrefix:'Объём / Крепость',
-    price:'Цена'
+    price:'Цена',
+    nothing:'Ничего не найдено'
   },
   uz:{
     brandSub:'FINE WINE & SPIRITS',
@@ -756,7 +754,8 @@ const UI = {
     nonalc:'Alkogolsiz',
     draft:'Quyma',
     metaPrefix:'Hajm / Foiz',
-    price:'Narx'
+    price:'Narx',
+    nothing:"Hech narsa topilmadi"
   },
   en:{
     brandSub:'FINE WINE & SPIRITS',
@@ -787,18 +786,50 @@ const UI = {
     nonalc:'Non-alcoholic',
     draft:'Draft',
     metaPrefix:'Volume / ABV',
-    price:'Price'
+    price:'Price',
+    nothing:"Nothing found"
   }
 };
 
 let lang='ru';
 
-/* ✅ Главные категории */
+/* Категории (добавлены по вашему списку) */
+const CATEGORY_LABELS = {
+  beer: {ru:'🍺 Пиво', uz:'🍺 Pivo', en:'🍺 Beer'},
+  rum: {ru:'🥃 Ром', uz:'🥃 Rom', en:'🥃 Rum'},
+  gin: {ru:'🍸 Джин', uz:'🍸 Jin', en:'🍸 Gin'},
+  liqueur: {ru:'🍷 Ликёр', uz:'🍷 Liker', en:'🍷 Liqueur'},
+  whisky: {ru:'🥃 Виски', uz:'🥃 Viski', en:'🥃 Whisky'},
+  vodka: {ru:'🍶 Водка', uz:'🍶 Aroq', en:'🍶 Vodka'},
+  gin_tonic: {ru:'🥤 Gin-Tonic', uz:'🥤 Gin-Tonic', en:'🥤 Gin-Tonic'},
+  cocktails: {ru:'🍹 Коктейли', uz:'🍹 Kokteyllar', en:'🍹 Cocktails'},
+  greek: {ru:'🏛️ Греческий напиток', uz:'🏛️ Grek ichimligi', en:'🏛️ Greek drink'},
+  sparkling: {ru:'🥂 Игристое вино', uz:'🥂 Shampan/ko‘pik', en:'🥂 Sparkling wine'},
+  vermouth: {ru:'🍸 Вермут', uz:'🍸 Vermut', en:'🍸 Vermouth'},
+  tequila: {ru:'🌵 Текила', uz:'🌵 Tekila', en:'🌵 Tequila'},
+  cognac: {ru:'🥃 Коньяк', uz:'🥃 Konyak', en:'🥃 Cognac'},
+  brandy: {ru:'🥃 Бренди', uz:'🥃 Brendi', en:'🥃 Brandy'}
+};
+
+/* Главные категории (кнопки сверху) */
 const MAIN_CATS = [
-  {key:'beer', icon:'🍺'}
+  {key:'beer'},
+  {key:'rum'},
+  {key:'gin'},
+  {key:'liqueur'},
+  {key:'whisky'},
+  {key:'vodka'},
+  {key:'gin_tonic'},
+  {key:'cocktails'},
+  {key:'greek'},
+  {key:'sparkling'},
+  {key:'vermouth'},
+  {key:'tequila'},
+  {key:'cognac'},
+  {key:'brandy'}
 ];
 
-/* ✅ Подкатегории пива */
+/* Подкатегории пива */
 const BEER_SUBCATS = [
   {key:'bottled', icon:'🍾'},
   {key:'nonalc',  icon:'🥤'},
@@ -809,8 +840,67 @@ let category = 'beer';
 let subcat = 'bottled';
 let cart = {};
 
-/* ✅ ТВОЙ СПИСОК (суммы, крепость, объём) */
-/* ✅ Фото: положи изображения в папку images/ с такими именами (id).jpg */
+/* helpers */
+function escapeHtml(s){return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function formatSum(x){const n = Number(x) || 0; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
+
+/* item builders */
+function mkItem(id, name, volLiters, abvPercent, price, catKey){
+  const vol = (volLiters!==null && volLiters!==undefined && String(volLiters).length)
+    ? `${String(volLiters).replace('.', ',')} л`
+    : '';
+  const abv = (abvPercent!==null && abvPercent!==undefined && String(abvPercent).length)
+    ? `${String(abvPercent).replace('.', ',')}%`
+    : '';
+  const catName = CATEGORY_LABELS?.[catKey]?.[lang] || catKey;
+
+  return {
+    id,
+    p: Number(price)||0,
+    vol,
+    abv,
+    img: `images/${id}.jpg`,
+    n: {ru:name, uz:name, en:name},
+    desc: {
+      ru: `Категория: ${catName}\n${UI.ru.metaPrefix}: ${vol} • ${abv}\n\nДобавьте в корзину и отправьте заявку — менеджер подтвердит наличие и условия.`,
+      uz: `Kategoriya: ${catName}\n${UI.uz.metaPrefix}: ${vol} • ${abv}\n\nSavatga qo‘shing va so‘rov yuboring — menejer tasdiqlaydi.`,
+      en: `Category: ${catName}\n${UI.en.metaPrefix}: ${vol} • ${abv}\n\nAdd to cart and send a request — manager will confirm availability.`
+    }
+  };
+}
+
+function mkBeer(id, name, vol, abv, price){
+  return {
+    id,
+    p: Number(price)||0,
+    vol: String(vol||''),
+    abv: String(abv||''),
+    img: `images/${id}.jpg`,
+    n: {ru:name, uz:name, en:name},
+    desc: {
+      ru: `Категория: ${UI.ru.beer} / ${subcatRuGuess(id)}.\n${UI.ru.metaPrefix}: ${vol} • ${abv}.\n\nДобавьте в корзину и отправьте заявку — менеджер подтвердит наличие и условия.`,
+      uz: `Kategoriya: ${UI.uz.beer} / ${subcatUzGuess(id)}.\n${UI.uz.metaPrefix}: ${vol} • ${abv}.\n\nSavatga qo‘shing va so‘rov yuboring — menejer tasdiqlaydi.`,
+      en: `Category: ${UI.en.beer} / ${subcatEnGuess(id)}.\n${UI.en.metaPrefix}: ${vol} • ${abv}.\n\nAdd to cart and send a request — manager will confirm availability.`
+    }
+  };
+}
+function subcatRuGuess(id){
+  if(id.startsWith('draft_')) return 'Разливное';
+  if(id.includes('_0_0') || id.includes('alcohol_free')) return 'Безалкогольное';
+  return 'Бутылочное';
+}
+function subcatUzGuess(id){
+  if(id.startsWith('draft_')) return UI.uz.draft;
+  if(id.includes('_0_0') || id.includes('alcohol_free')) return UI.uz.nonalc;
+  return UI.uz.bottled;
+}
+function subcatEnGuess(id){
+  if(id.startsWith('draft_')) return UI.en.draft;
+  if(id.includes('_0_0') || id.includes('alcohol_free')) return UI.en.nonalc;
+  return UI.en.bottled;
+}
+
+/* MENU */
 const MENU = {
   beer: {
     bottled: [
@@ -843,53 +933,105 @@ const MENU = {
       mkBeer('draft_efes_pilsener_30l', 'EFES Pilsener', '30 л', '5%', 1077490),
       mkBeer('draft_kruzhka_svezhego_mild_30l', 'Kruzhka Svezhego Mild', '30 л', '4%', 952792)
     ]
-  }
+  },
+
+  /* ✅ Добавлено по вашему списку */
+  rum: [
+    mkItem('rum_bacardi_reserva', 'Bacardi Reserva', 1, 40, 576000, 'rum'),
+    mkItem('rum_bacardi_spiced', 'Bacardi Spiced', 1, 35, 347200, 'rum'),
+    mkItem('rum_oakheart_original_07', 'Oakheart Original', 0.7, 35, 257600, 'rum'),
+    mkItem('rum_oakheart_original_1', 'Oakheart Original', 1, 32, 278880, 'rum')
+  ],
+  gin: [
+    mkItem('gin_bombay_sapphire', 'Bombay Sapphire', 1, 47, 504000, 'gin'),
+    mkItem('gin_the_botanist_07', 'The Botanist', 0.7, 46, 604800, 'gin')
+  ],
+  liqueur: [
+    mkItem('liqueur_cointreau', 'Cointreau', 1, 40, 515200, 'liqueur'),
+    mkItem('liqueur_fireball', 'Fireball', 1, 33, 205000, 'liqueur')
+  ],
+  whisky: [
+    mkItem('whisky_dewars_12yo', "Dewar's 12 Y.O", 1, 40, 580000, 'whisky'),
+    mkItem('whisky_dewars_white_label', "Dewar's White Label", 1, 40, 392000, 'whisky'),
+    mkItem('whisky_paddy_07', 'Paddy', 0.7, 40, 320000, 'whisky'),
+    mkItem('whisky_port_charlotte_10yo_07', 'Port Charlotte 10 Y.O', 0.7, 50, 1142400, 'whisky'),
+    mkItem('whisky_william_lawsons_075', 'William Lawsons', 0.75, 40, 201000, 'whisky'),
+    mkItem('whisky_whisky_1', 'Виски', 1, 40, 287000, 'whisky')
+  ],
+  vodka: [
+    mkItem('vodka_finlandia_05', 'Finlandia', 0.5, 40, 160000, 'vodka'),
+    mkItem('vodka_finlandia_blackcurrant_05', 'Finlandia Blackcurrant', 0.5, 37.5, 160000, 'vodka'),
+    mkItem('vodka_grey_goose_45', 'Grey Goose', 4.5, 40, 5230400, 'vodka')
+  ],
+  gin_tonic: [
+    mkItem('gin_tonic_classic_045_p44', 'Gin-Tonic', 0.45, 5, 19500, 'gin_tonic'),
+    mkItem('gin_tonic_classic_045_p45', 'Gin-Tonic', 0.45, 5, 19500, 'gin_tonic'),
+    mkItem('gin_tonic_cherry_07', 'Gin-Tonic Cherry', 0.7, 7.7, 24000, 'gin_tonic'),
+    mkItem('gin_tonic_grapefruit_07', 'Gin-Tonic Grapefruit', 0.7, 7.7, 24000, 'gin_tonic'),
+    mkItem('gin_tonic_lemon_045', 'Gin-Tonic Lemon', 0.45, 5, 19500, 'gin_tonic'),
+    mkItem('gin_tonic_mango_07', 'Gin-Tonic Mango', 0.7, 7.7, 24000, 'gin_tonic'),
+    mkItem('gin_tonic_mojito_045', 'Gin-Tonic Mojito', 0.45, 5, 19500, 'gin_tonic'),
+    mkItem('gin_tonic_rush_07', 'Gin-Tonic Rush', 0.7, 7.7, 24000, 'gin_tonic')
+  ],
+  cocktails: [
+    mkItem('cocktails_labrioni_vintage_series_045', 'Lab.Rioni Vintage Series', 0.45, 6.9, 24000, 'cocktails'),
+    mkItem('cocktails_labrioni_vintage_series_and_045', 'Lab.Rioni Vintage Series &', 0.45, 6.9, 24000, 'cocktails')
+  ],
+  greek: [
+    mkItem('greek_metaxa_12_stars_005', 'METAXA 12 STARS', 0.05, 40, 44800, 'greek'),
+    mkItem('greek_metaxa_5_stars_07', 'METAXA 5 STARS', 0.7, 40, 313600, 'greek')
+  ],
+  sparkling: [
+    mkItem('sparkling_martini_asti_075', 'Martini Asti', 0.75, 7.5, 225000, 'sparkling'),
+    mkItem('sparkling_martini_brut_075', 'Martini Brut', 0.75, 11.5, 212800, 'sparkling'),
+    mkItem('sparkling_martini_prosecco_075', 'Martini Prosecco', 0.75, 11.5, 212800, 'sparkling'),
+    mkItem('sparkling_martini_rose_075', 'Martini Rose', 0.75, 9.5, 208320, 'sparkling')
+  ],
+  vermouth: [
+    mkItem('vermouth_martini_bianco_1', 'Martini Bianco', 1, 18, 235200, 'vermouth'),
+    mkItem('vermouth_martini_fiero_075', 'Martini Fiero', 0.75, 14.9, 232960, 'vermouth'),
+    mkItem('vermouth_martini_rosso_05', 'Martini Rosso', 0.5, 15, 123200, 'vermouth')
+  ],
+  tequila: [
+    mkItem('tequila_patron_anejo_07', 'Patrón Anejo', 0.7, 40, 1064000, 'tequila'),
+    mkItem('tequila_patron_reposado_07', 'Patrón Reposado', 0.7, 40, 940800, 'tequila'),
+    mkItem('tequila_patron_silver_07', 'Patrón Silver', 0.7, 40, 871360, 'tequila'),
+    mkItem('tequila_sierra_blanco_07', 'Sierra Blanco', 0.7, 40, 245000, 'tequila'),
+    mkItem('tequila_sierra_reposado_07', 'Sierra Reposado', 0.7, 38, 255000, 'tequila')
+  ],
+  cognac: [
+    mkItem('cognac_remy_martin_1738_accord_royal_07', 'Remy Martin 1738 Accord Royal', 0.7, 40, 1132152, 'cognac'),
+    mkItem('cognac_remy_martin_vsop_07', 'Remy Martin V.S.O.P', 0.7, 40, 952000, 'cognac'),
+    mkItem('cognac_remy_martin_xo_07', 'Remy Martin X.O', 0.7, 40, 3427200, 'cognac')
+  ],
+  brandy: [
+    mkItem('brandy_saint_remy_vsop_07', 'Saint Remy V.S.O.P', 0.7, 40, 280000, 'brandy'),
+    mkItem('brandy_saint_remy_xo_05', 'Saint Remy X.O', 0.5, 40, 224000, 'brandy')
+  ]
 };
 
-function mkBeer(id, name, vol, abv, price){
-  return {
-    id,
-    p: Number(price)||0,
-    vol: String(vol||''),
-    abv: String(abv||''),
-    img: `images/${id}.jpg`,
-    n: {ru:name, uz:name, en:name},
-    desc: {
-      ru: `Категория: ${UI.ru.beer} / ${subcatRuGuess(id)}.\n${UI.ru.metaPrefix}: ${vol} • ${abv}.\n\nДобавьте в корзину и отправьте заявку — менеджер подтвердит наличие и условия.`,
-      uz: `Kategoriya: ${UI.uz.beer} / ${subcatUzGuess(id)}.\n${UI.uz.metaPrefix}: ${vol} • ${abv}.\n\nSavatga qo‘shing va so‘rov yuboring — menejer tasdiqlaydi.`,
-      en: `Category: ${UI.en.beer} / ${subcatEnGuess(id)}.\n${UI.en.metaPrefix}: ${vol} • ${abv}.\n\nAdd to cart and send a request — manager will confirm availability.`
-    }
-  };
-}
-
-function subcatRuGuess(id){
-  if(id.startsWith('draft_')) return 'Разливное';
-  if(id.includes('_0_0') || id.includes('alcohol_free')) return 'Безалкогольное';
-  return 'Бутылочное';
-}
-function subcatUzGuess(id){
-  if(id.startsWith('draft_')) return UI.uz.draft;
-  if(id.includes('_0_0') || id.includes('alcohol_free')) return UI.uz.nonalc;
-  return UI.uz.bottled;
-}
-function subcatEnGuess(id){
-  if(id.startsWith('draft_')) return UI.en.draft;
-  if(id.includes('_0_0') || id.includes('alcohol_free')) return UI.en.nonalc;
-  return UI.en.bottled;
-}
-
+/* index all items */
 const ITEM_INDEX = {};
-for(const catKey in MENU){
-  const subObj = MENU[catKey] || {};
-  for(const sKey in subObj){
-    (subObj[sKey]||[]).forEach(it => ITEM_INDEX[it.id]=it);
+(function buildIndex(){
+  for(const catKey in MENU){
+    const val = MENU[catKey];
+    if(Array.isArray(val)){
+      val.forEach(it => ITEM_INDEX[it.id] = it);
+    }else{
+      const subs = val || {};
+      for(const sKey in subs){
+        (subs[sKey]||[]).forEach(it => ITEM_INDEX[it.id] = it);
+      }
+    }
   }
+})();
+
+function nameOf(id){
+  const it = ITEM_INDEX[id];
+  return (it && it.n && (it.n[lang] || it.n.ru)) ? (it.n[lang] || it.n.ru) : id;
 }
 
-function escapeHtml(s){return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function nameOf(id){const it = ITEM_INDEX[id]; return (it && it.n && (it.n[lang] || it.n.ru)) ? (it.n[lang] || it.n.ru) : id;}
-function formatSum(x){const n = Number(x) || 0; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
-
+/* welcome + ui */
 function renderWelcome(){
   const el = document.getElementById('welcomeLine');
   if(!el) return;
@@ -935,10 +1077,10 @@ function applyUI(){
   const d = document.getElementById('aboutDescText');
   if(d){
     d.innerHTML = (lang==='ru')
-      ? `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>Как оформить заявку:</b><br>1) Выберите подкатегорию<br>2) Добавьте позиции в корзину<br>3) Нажмите “${UI[lang].order}”<br><br><span class="muted">*Цены указаны в сумах.</span>`
+      ? `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>Как оформить заявку:</b><br>1) Выберите категорию<br>2) Добавьте позиции в корзину<br>3) Нажмите “${UI[lang].order}”<br><br><span class="muted">*Цены указаны в сумах.</span>`
       : (lang==='uz')
       ? `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>So‘rov yuborish:</b><br>1) Kategoriyani tanlang<br>2) Savatga qo‘shing<br>3) “${UI[lang].order}” tugmasini bosing<br><br><span class="muted">*Narxlar so‘mda.</span>`
-      : `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>How to request:</b><br>1) Choose subcategory<br>2) Add items to cart<br>3) Press “${UI[lang].order}”<br><br><span class="muted">*Prices are in UZS.</span>`;
+      : `GRAND CRU — <b>FINE WINE &amp; SPIRITS</b>.<br><br><b>How to request:</b><br>1) Choose category<br>2) Add items to cart<br>3) Press “${UI[lang].order}”<br><br><span class="muted">*Prices are in UZS.</span>`;
   }
 
   renderWelcome();
@@ -949,6 +1091,7 @@ function applyUI(){
   setTimeout(syncStickyHeight, 50);
 }
 
+/* menu actions */
 function openTopMenu(){ closeSearch(); menuBackdrop.classList.add('show'); menuSheet.classList.add('show'); }
 function closeTopMenu(){ menuBackdrop.classList.remove('show'); menuSheet.classList.remove('show'); }
 
@@ -981,7 +1124,7 @@ function openInstagram(e){
   try{Telegram.WebApp.openLink(INSTA_URL);}catch(_){window.open(INSTA_URL,'_blank');}
 }
 
-/* ✅ subcategories sheet */
+/* subcategories sheet */
 function openSubcats(){
   closeSearch();
   subcatBackdrop.classList.add('show');
@@ -1022,12 +1165,15 @@ function selectSubcat(key){
 }
 
 /* categories */
+function catLabel(key){
+  return CATEGORY_LABELS?.[key]?.[lang] || key;
+}
 function renderCats(){
   cats.innerHTML='';
   MAIN_CATS.forEach(c=>{
-    const title = (c.key==='beer') ? UI[lang].beer : c.key;
+    const title = catLabel(c.key);
     const isActive = (category===c.key) ? 'active' : '';
-    cats.innerHTML += `<button class="btn cat-btn ${isActive}" onclick="onCategoryClick('${c.key}')">${title}</button>`;
+    cats.innerHTML += `<button class="btn cat-btn ${isActive}" onclick="onCategoryClick('${c.key}')">${escapeHtml(title)}</button>`;
   });
 }
 function onCategoryClick(k){
@@ -1036,6 +1182,7 @@ function onCategoryClick(k){
   if(category==='beer'){
     openSubcats();
   }else{
+    closeSubcats();
     if(!isSearchOpen()) renderProducts();
   }
 }
@@ -1068,27 +1215,37 @@ function matchesQuery(it,q){
   ].filter(Boolean).join(' ').toLowerCase();
   return all.includes(q);
 }
+
+function iterAllItems(fn){
+  for(const catKey in MENU){
+    const val = MENU[catKey];
+    if(Array.isArray(val)){
+      val.forEach(it=>fn(it,catKey,null));
+    }else{
+      for(const sKey in (val||{})){
+        (val[sKey]||[]).forEach(it=>fn(it,catKey,sKey));
+      }
+    }
+  }
+}
+
 function searchProducts(){
   const q=(searchInput.value||'').trim().toLowerCase();
   products.innerHTML='';
   if(!q){ renderProducts(); return; }
 
   let found=0;
-  for(const catKey in MENU){
-    const subs = MENU[catKey] || {};
-    for(const sKey in subs){
-      (subs[sKey]||[]).forEach(it=>{
-        if(matchesQuery(it,q)){
-          cart[it.id]=cart[it.id]||0;
-          products.innerHTML += cardHTML(it);
-          found++;
-        }
-      });
+  iterAllItems((it)=>{
+    if(matchesQuery(it,q)){
+      cart[it.id]=cart[it.id]||0;
+      products.innerHTML += cardHTML(it);
+      found++;
     }
-  }
+  });
+
   if(found===0){
     products.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:18px;font-weight:900;opacity:.9;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:18px;">
-      ${lang==='ru'?'Ничего не найдено':lang==='uz'?'Hech narsa topilmadi':'Nothing found'}
+      ${escapeHtml(UI[lang].nothing)}
     </div>`;
   }
 }
@@ -1113,10 +1270,20 @@ function cardHTML(it){
     </div>
   </div>`;
 }
+
 function renderProducts(){
   products.innerHTML='';
   if(category==='beer'){
     (MENU.beer?.[subcat] || []).forEach(it=>{
+      cart[it.id]=cart[it.id]||0;
+      products.innerHTML += cardHTML(it);
+    });
+    return;
+  }
+
+  const list = MENU[category];
+  if(Array.isArray(list)){
+    list.forEach(it=>{
       cart[it.id]=cart[it.id]||0;
       products.innerHTML += cardHTML(it);
     });
@@ -1144,11 +1311,11 @@ function openImage(e,id){
 
   const chips = document.getElementById('imgDescChips');
   chips.innerHTML = '';
-  chips.innerHTML += `<div class="chip">${escapeHtml(it.vol || '')}</div>`;
-  chips.innerHTML += `<div class="chip">${escapeHtml(it.abv || '')}</div>`;
+  if(it.vol) chips.innerHTML += `<div class="chip">${escapeHtml(it.vol)}</div>`;
+  if(it.abv) chips.innerHTML += `<div class="chip">${escapeHtml(it.abv)}</div>`;
   chips.innerHTML += `<div class="chip">${formatSum(it.p)} ${escapeHtml(UI[lang].sum)}</div>`;
-  chips.innerHTML += `<div class="chip">${escapeHtml(UI[lang].beer)}</div>`;
-  chips.innerHTML += `<div class="chip">${escapeHtml(subcatNameLang(subcat))}</div>`;
+  chips.innerHTML += `<div class="chip">${escapeHtml(catLabel(category))}</div>`;
+  if(category==='beer') chips.innerHTML += `<div class="chip">${escapeHtml(subcatNameLang(subcat))}</div>`;
 
   imgModal.classList.add('show');
 }
@@ -1228,7 +1395,7 @@ function sendOrder(){
     brand:'GRAND CRU',
     tg:{id:tg_id,username:tg_username,first_name:tg_first_name},
     category,
-    subcat,
+    subcat: (category==='beer' ? subcat : null),
     items,
     total: formatSum(totalSum),
     total_num: totalSum,
@@ -1260,7 +1427,6 @@ function setLang(l,btn){
   btn.classList.add('active');
   applyUI();
 }
-
 function subcatNameLang(key){
   if(key==='bottled') return UI[lang].bottled;
   if(key==='nonalc') return UI[lang].nonalc;
