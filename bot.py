@@ -3,6 +3,7 @@ import logging
 import json
 import os
 import time
+from html import escape
 
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
@@ -64,11 +65,11 @@ def kb_channel_deeplink() -> InlineKeyboardMarkup:
 def welcome_text() -> str:
     return (
         "🇷🇺 Добро пожаловать в <b>GRAND CRU</b>! 👋 "
-        "Выберите блюда и оформите заказ — нажмите «Открыть» ниже.\n\n"
+        "Выберите продукцию и оформите заявку — нажмите «Открыть» ниже.\n\n"
         "🇺🇿 <b>GRAND CRU</b> ga xush kelibsiz! 👋 "
-        "Taomlarni tanlang va buyurtma bering — pastdagi «Ochish» tugmasini bosing.\n\n"
+        "Mahsulotlarni tanlang va buyurtma bering — pastdagi «Ochish» tugmasini bosing.\n\n"
         "🇬🇧 Welcome to <b>GRAND CRU</b>! 👋 "
-        "Choose dishes and place an order — tap “Open” below."
+        "Choose products and place an order — tap “Open” below."
     )
 
 # ====== /start ======
@@ -108,7 +109,7 @@ async def post_menu(message: types.Message):
             )
     except Exception as e:
         logging.exception("CHANNEL POST ERROR")
-        await message.answer(f"❌ Ошибка отправки в канал: <code>{e}</code>")
+        await message.answer(f"❌ Ошибка отправки в канал: <code>{escape(str(e))}</code>")
 
 # ====== ВСПОМОГАТЕЛЬНЫЕ ======
 def fmt_sum(n: int) -> str:
@@ -152,9 +153,9 @@ def build_order_lines(data: dict) -> list[str]:
                 continue
             price = safe_int(it.get("price"), 0)
             if price > 0:
-                lines.append(f"• {name} × {qty} = {fmt_sum(price * qty)} сум")
+                lines.append(f"• {escape(name)} × {qty} = {fmt_sum(price * qty)} сум")
             else:
-                lines.append(f"• {name} × {qty}")
+                lines.append(f"• {escape(name)} × {qty}")
 
     if not lines:
         lines = ["⚠️ Корзина пустая"]
@@ -165,14 +166,18 @@ def build_order_lines(data: dict) -> list[str]:
 @dp.message(F.web_app_data)
 async def webapp_data(message: types.Message):
     raw = message.web_app_data.data
-    await message.answer("✅ <b>Получил заказ.</b> Обрабатываю…")
+    await message.answer("⏳ <b>Обрабатываю заказ…</b>")
 
     try:
         data = json.loads(raw) if raw else {}
     except Exception:
         data = {}
 
+    if not isinstance(data, dict):
+        return await message.answer("❌ Неверный формат заказа.")
     lines = build_order_lines(data)
+    if lines == ["⚠️ Корзина пустая"]:
+        return await message.answer("❌ Корзина пустая. Добавьте товары.")
 
     total_str = clean_str(data.get("total_with_delivery")) or clean_str(data.get("total_items")) or "0"
     payment = clean_str(data.get("payment")) or "—"
@@ -184,20 +189,24 @@ async def webapp_data(message: types.Message):
 
     admin_text = (
         "🚨 <b>НОВЫЙ ЗАКАЗ GRAND CRU</b>\n"
-        f"🆔 <b>{order_id}</b>\n\n"
+        f"🆔 <b>{escape(order_id)}</b>\n\n"
         + "\n".join(lines) +
-        f"\n\n💰 <b>Сумма:</b> {total_str} сум"
-        f"\n🚚 <b>Тип:</b> {order_type}"
-        f"\n💳 <b>Оплата:</b> {payment}"
-        f"\n📍 <b>Адрес:</b> {address}"
-        f"\n📞 <b>Телефон:</b> {phone}"
-        f"\n👤 <b>Telegram:</b> {tg_label(message.from_user)}"
+        f"\n\n💰 <b>Сумма:</b> {escape(total_str)} сум"
+        f"\n🚚 <b>Тип:</b> {escape(order_type)}"
+        f"\n💳 <b>Оплата:</b> {escape(payment)}"
+        f"\n📍 <b>Адрес:</b> {escape(address)}"
+        f"\n📞 <b>Телефон:</b> {escape(phone)}"
+        f"\n👤 <b>Telegram:</b> {escape(tg_label(message.from_user))}"
     )
 
     if comment:
-        admin_text += f"\n💬 <b>Комментарий:</b> {comment}"
+        admin_text += f"\n💬 <b>Комментарий:</b> {escape(comment)}"
 
-    await bot.send_message(ADMIN_ID, admin_text)
+    try:
+        await bot.send_message(ADMIN_ID, admin_text)
+    except Exception:
+        logging.exception("ORDER DELIVERY ERROR")
+        return await message.answer("⚠️ Не удалось передать заказ менеджеру. Попробуйте позже или свяжитесь с компанией напрямую.")
 
     await message.answer(
         "✅ <b>Ваш заказ принят!</b>\n"
@@ -206,8 +215,22 @@ async def webapp_data(message: types.Message):
 
 # ====== ЗАПУСК ======
 async def main():
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    # Polling does not require deleting webhook on every start. Keep pending orders.
+    # Set RESET_WEBHOOK=1 only when migrating from webhook mode to polling.
+    if os.getenv("RESET_WEBHOOK", "0") == "1":
+        for attempt in range(5):
+            try:
+                await bot.delete_webhook(drop_pending_updates=False)
+                break
+            except Exception:
+                logging.exception("Webhook reset failed (attempt %s/5)", attempt + 1)
+                if attempt == 4:
+                    raise
+                await asyncio.sleep(min(2 ** attempt, 20))
+    try:
+        await dp.start_polling(bot, polling_timeout=20, handle_signals=True)
+    finally:
+        await bot.session.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
