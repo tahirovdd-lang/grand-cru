@@ -3,6 +3,8 @@ import logging
 import json
 import os
 import time
+import sqlite3
+from pathlib import Path
 from html import escape
 
 from aiogram import Bot, Dispatcher, types, F
@@ -31,6 +33,16 @@ CHANNEL_ID = os.getenv("CHANNEL_ID", "@GRAND_CRU")
 
 # ✅ GitHub Pages WebApp
 WEBAPP_URL = os.getenv("WEBAPP_URL", "https://tahirovdd-lang.github.io/grand-cru/?v=1")
+
+# Persistent SQLite order history. Mount /app/data as persistent storage in Bothost.
+DB_PATH = os.getenv("DB_PATH", "/app/data/grandcru.db")
+def db_connect():
+    Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH, timeout=20)
+    conn.execute("CREATE TABLE IF NOT EXISTS customers (telegram_id INTEGER PRIMARY KEY, username TEXT, display_name TEXT, phone TEXT, email TEXT, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)")
+    conn.execute("CREATE TABLE IF NOT EXISTS orders (order_id TEXT PRIMARY KEY, telegram_id INTEGER NOT NULL, items_json TEXT NOT NULL, total INTEGER NOT NULL, address TEXT, phone TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)")
+    conn.commit()
+    return conn
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
 dp = Dispatcher()
@@ -207,6 +219,15 @@ async def webapp_data(message: types.Message):
     except Exception:
         logging.exception("ORDER DELIVERY ERROR")
         return await message.answer("⚠️ Не удалось передать заказ менеджеру. Попробуйте позже или свяжитесь с компанией напрямую.")
+
+    # Record only successfully delivered orders. Database failures must not block Telegram confirmations.
+    try:
+        u = message.from_user
+        with db_connect() as conn:
+            conn.execute("INSERT INTO customers (telegram_id, username, display_name, phone) VALUES (?,?,?,?) ON CONFLICT(telegram_id) DO UPDATE SET username=excluded.username, display_name=excluded.display_name, phone=excluded.phone, updated_at=CURRENT_TIMESTAMP", (u.id, u.username, u.full_name, phone))
+            conn.execute("INSERT OR IGNORE INTO orders (order_id, telegram_id, items_json, total, address, phone) VALUES (?,?,?,?,?,?)", (order_id, u.id, json.dumps(data.get("items", []), ensure_ascii=False), safe_int(data.get("total_num")), address, phone))
+    except Exception:
+        logging.exception("ORDER DATABASE SAVE ERROR")
 
     await message.answer(
         "✅ <b>Ваш заказ принят!</b>\n"
