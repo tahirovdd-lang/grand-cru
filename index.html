@@ -450,6 +450,37 @@ textarea.input{height:90px;}
   .welcome{font-size:12px;padding:6px 9px;}
   .subcats-grid{grid-template-columns:repeat(2,1fr);}
 }
+
+/* GRAND CRU — LUXURY BLACK & GOLD · 2026 */
+:root{--bg:#0b0c0e;--white:#f7f1e7;--text:#f7f1e7;--muted:#aaa398;--stroke:rgba(209,174,105,.25);--shadow:rgba(0,0,0,.45);--accent:#d4af69;--gold:#d4af69}
+html{background:#0b0c0e}
+body{background:radial-gradient(ellipse at 50% -15%,#28231d 0%,#101113 48%,#090a0c 100%);color:#f7f1e7}
+.header{background:linear-gradient(125deg,#18191c,#0c0d0f);border-bottom:1px solid rgba(212,175,105,.35);box-shadow:0 14px 34px #0008}
+.header img{background:#151619;border:1px solid #a9874b55;box-shadow:0 8px 24px #0008}
+.brand-title{color:#e9c888;text-shadow:0 1px 18px #d4af6930}
+.brand-title2{color:#c9b58c}
+.welcome{background:#d4af6912;color:#e5d3b0;border-color:#d4af6944}
+.act-btn{background:#1b1c20;border-color:#d4af6966;box-shadow:0 6px 18px #0007}
+.burger span{background:#d4af69}.act-ico{color:#d4af69}
+.btn,.langs .btn{background:#1c1d20;color:#e9d8b5;border:1px solid #d4af6955;box-shadow:0 7px 20px #0006}
+.btn.active,.langs .btn.active,.cat-btn.active{background:linear-gradient(135deg,#f1d59b,#bd924d);color:#17130e;border-color:#f1d59b;box-shadow:0 8px 22px #c49d5030}
+.categories{gap:10px}.products{gap:12px;padding:12px}
+.card{background:linear-gradient(165deg,#1e1f22,#121316);border:1px solid #d4af6936;color:#f6efe3;box-shadow:0 14px 26px #0008;border-radius:20px;padding:12px}
+.img{height:172px;background:radial-gradient(ellipse,#33302a 0%,#1a1b1e 70%);border-radius:14px}
+.img img{object-fit:contain;max-height:155px;max-width:95%;border-radius:8px}
+.item-name{color:#f5eee1;font-size:13px}.item-meta{color:#a7a09a}.price{color:#e4bf79;font-size:16px}
+.counter button{background:linear-gradient(145deg,#e1bc78,#a87f3f);color:#15120d;border:1px solid #f1d79e;box-shadow:0 4px 12px #0007}
+.cart{background:linear-gradient(160deg,#202125,#111215);color:#f7efe2;border:1px solid #d4af6945;box-shadow:0 16px 34px #0009}
+.input,textarea.input{background:#1b1c1f;color:#f8f1e5;border:1px solid #d4af6955;box-shadow:none}
+.input::placeholder{color:#9d968a}
+.input:focus{outline:1px solid #d4af69}
+.order-btn{background:linear-gradient(135deg,#f2d69e,#b78c48);color:#1a140c;border:1px solid #f1d59b;box-shadow:0 12px 24px #0008}
+.popup-box,.img-modal-box{background:#1a1b1e;color:#f7eee0;border-color:#d4af6955}
+.img-modal-top{background:#242428}.img-modal-close{color:#e2c48a}.img-modal-left,.img-modal-img{background:#121316}
+.img-modal-right{color:#f5eee0}.img-desc-meta{color:#d4af69}
+.img-modal-left{border-right-color:#d4af6930}
+body button:focus-visible,body input:focus-visible{outline:2px solid #e8c67f;outline-offset:2px}
+
 </style>
 </head>
 
@@ -1435,8 +1466,8 @@ function subcatNameLang(key){
 
 /* init theme */
 try{
-  Telegram.WebApp.setHeaderColor?.('#8B0E13');
-  Telegram.WebApp.setBackgroundColor?.('#8B0E13');
+  Telegram.WebApp.setHeaderColor?.('#0b0c0e');
+  Telegram.WebApp.setBackgroundColor?.('#0b0c0e');
 }catch(_){}
 
 /* init */
