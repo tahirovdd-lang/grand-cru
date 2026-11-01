@@ -69,8 +69,33 @@ const fmt=n=>Math.round(Number(n)||0).toLocaleString('ru-RU').replace(/\u00a0/g,
 function save(){localStorage.setItem(key,JSON.stringify(cart));localStorage.setItem(favKey,JSON.stringify(favorites))}
 function catIcon(c){return symbol[c]||'🍾'}
 function productImage(p){return p.image||p.img||''}
+// Remove only near-white pixels connected to the photo edges; keep the bottle label intact.
+const gcCutoutCache=new Map();
+function removeWhitePhoto(img,key){
+ if(img.dataset.cutoutDone)return;
+ if(gcCutoutCache.has(key)){img.dataset.cutoutDone='1';img.src=gcCutoutCache.get(key);return}
+ try{
+  const canvas=document.createElement('canvas'),w=img.naturalWidth,h=img.naturalHeight;
+  if(!w||!h||w*h>2500000)return;
+  canvas.width=w;canvas.height=h;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+  const data=ctx.getImageData(0,0,w,h),px=data.data,seen=new Uint8Array(w*h),queue=new Int32Array(w*h);
+  let head=0,tail=0;
+  const eligible=i=>{const k=i*4;return px[k]>227&&px[k+1]>227&&px[k+2]>227&&Math.max(px[k],px[k+1],px[k+2])-Math.min(px[k],px[k+1],px[k+2])<22};
+  const push=i=>{if(!seen[i]&&eligible(i)){seen[i]=1;queue[tail++]=i}};
+  for(let x=0;x<w;x++){push(x);push((h-1)*w+x)}
+  for(let y=0;y<h;y++){push(y*w);push(y*w+w-1)}
+  while(head<tail){const i=queue[head++],x=i%w,y=(i/w)|0;
+   if(x>0)push(i-1);if(x<w-1)push(i+1);if(y>0)push(i-w);if(y<h-1)push(i+w)}
+  if(tail<w*h*.08)return;
+  for(let i=0;i<w*h;i++)if(seen[i])px[i*4+3]=0;
+  ctx.putImageData(data,0,0);
+  const result=canvas.toDataURL('image/png');gcCutoutCache.set(key,result);
+  img.dataset.cutoutDone='1';img.style.mixBlendMode='normal';img.src=result;
+ }catch(e){img.style.mixBlendMode='multiply'}
+}
 function optimizedImage(src,large){if(!/^https:\/\//i.test(src))return src;return 'https://wsrv.nl/?url='+encodeURIComponent(src)+'&w='+(large?800:360)+'&q=72&output=webp&fit=contain'}
-function visual(p,style=''){const src=productImage(p);if(!src)return '<span class="placeholder">'+catIcon(p.category)+'</span>';const large=style==='large';const fast=optimizedImage(src,large);return '<img src="'+esc(fast)+'" alt="'+esc(p.name)+'" loading="'+(large?'eager':'lazy')+'" decoding="async" fetchpriority="'+(large?'high':'low')+'" onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src='+JSON.stringify(src).replace(/"/g,'&quot;')+'}else{this.replaceWith(document.createTextNode(\'🍾\'))}">'}
+function visual(p,style=''){const src=productImage(p);if(!src)return '<span class="placeholder">'+catIcon(p.category)+'</span>';const large=style==='large';const fast=optimizedImage(src,large);return '<img '+(p.id==='gc26_0001'?'crossorigin="anonymous" style="mix-blend-mode:multiply" onload="removeWhitePhoto(this,\'gc26_0001_'+(large?'large':'small')+'\')" ':'')+'src="'+esc(fast)+'" alt="'+esc(p.name)+'" loading="'+(large?'eager':'lazy')+'" decoding="async" fetchpriority="'+(large?'high':'low')+'" onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src='+JSON.stringify(src).replace(/"/g,'&quot;')+'}else{this.replaceWith(document.createTextNode(\'🍾\'))}">'}
 function showPage(page){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===page));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='catalog')renderCatalog();if(page==='cart')renderCart();if(page==='orders')renderHistory();if(page==='profile')renderProfile();window.scrollTo(0,0)}
 function navDrawer(page){toggleDrawer(false);showPage(page)}
 function hideSearchKeyboard(){$('search').blur()}
