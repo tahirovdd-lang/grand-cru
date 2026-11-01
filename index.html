@@ -5,6 +5,7 @@
 <title>GRAND CRU — FINE WINE &amp; SPIRITS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="catalog-data.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -1042,6 +1043,42 @@ const MENU = {
 };
 
 /* index all items */
+
+/* Optional full-price-list catalog. Existing items remain available if catalog-data.js is not uploaded. */
+if(Array.isArray(window.GRAND_CRU_CATALOG) && window.GRAND_CRU_CATALOG.length){
+  const newCats={
+    wine:{ru:'🍷 Тихие вина',uz:'🍷 Vinolar',en:'🍷 Still wines'},
+    grappa:{ru:'🥃 Граппа',uz:'🥃 Grappa',en:'🥃 Grappa'},
+    softdrinks:{ru:'🥤 Вода и напитки',uz:'🥤 Ichimliklar',en:'🥤 Soft drinks'},
+    spirits:{ru:'🥃 Другой алкоголь',uz:'🥃 Boshqa spirtli ichimliklar',en:'🥃 Other spirits'}
+  };
+  Object.assign(CATEGORY_LABELS,newCats);
+  Object.keys(newCats).forEach(k=>{if(!MAIN_CATS.some(c=>c.key===k))MAIN_CATS.push({key:k});});
+  const groups={};
+  for(const raw of window.GRAND_CRU_CATALOG){
+    const cat=raw.category||'spirits';
+    const details=raw.details||{};
+    const desc=[details.region,details.color,details.sugar,details.grapes,details.year].filter(v=>v&&v!=='N/A').join(' • ');
+    const item={
+      id:String(raw.id),p:Number(raw.price)||0,vol:String(raw.vol||''),abv:'',
+      img:'images/logo.png',
+      n:{ru:String(raw.name||''),uz:String(raw.name||''),en:String(raw.name||'')},
+      desc:{ru:desc||String(details.group||''),uz:desc||String(details.group||''),en:desc||String(details.group||'')}
+    };
+    (groups[cat] ||= []).push(item);
+  }
+  for(const [cat,entries] of Object.entries(groups)){
+    if(cat==='beer'){
+      MENU.beer={bottled:[],nonalc:[],draft:[]};
+      for(const it of entries){
+        const n=it.n.ru.toLowerCase();
+        const target=/разлив|кег|кега|draught.*30|20л|30л/.test(n)?'draft':/безалког|0[.,]0%|non.alco|zero/.test(n)?'nonalc':'bottled';
+        MENU.beer[target].push(it);
+      }
+    }else{MENU[cat]=entries;}
+  }
+}
+
 const ITEM_INDEX = {};
 (function buildIndex(){
   for(const catKey in MENU){
