@@ -5,7 +5,10 @@
 <style>
 :root{--bg:#08090a;--panel:#141414;--panel2:#1d1b18;--gold:#e4bc72;--gold2:#b7853b;--text:#f9f5ec;--muted:#aaa59d;--line:#5d4b2e;--bottom:78px}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:radial-gradient(ellipse at top,#24201a 0,#090909 42%);color:var(--text);font:13px Montserrat,sans-serif;min-height:100vh;padding-bottom:calc(var(--bottom) + env(safe-area-inset-bottom) + 18px)}
-button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold)}.shell{max-width:640px;margin:auto}.hidden{display:none!important}
+button,input,textarea{font:inherit}
+/* Prevent iOS Telegram WebView auto-zoom when focusing text fields. */
+input[type="text"],input[type="search"],input[type="tel"],input:not([type]),textarea{font-size:16px!important;line-height:1.4}
+button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold)}.shell{max-width:640px;margin:auto}.hidden{display:none!important}
 header{height:74px;display:flex;align-items:center;justify-content:space-between;padding:8px 19px;background:#080808dc;position:sticky;top:0;z-index:15;border-bottom:1px solid #4b3c285c;backdrop-filter:blur(12px)}
 .iconbtn{border:0;background:none;color:var(--gold);font-size:24px;min-width:36px;min-height:40px}.brand{text-align:center}.grapes{color:var(--gold);font-size:21px;line-height:1}.brand-name{font:700 27px 'Cormorant Garamond',serif;color:#f1d394;letter-spacing:1px;line-height:1}.brand-sub{font-size:8px;letter-spacing:1.4px;color:#d8b77c}
 .screen{display:none;padding:15px 16px 24px}.screen.active{display:block}.screen h2{font:600 29px 'Cormorant Garamond',serif;margin:8px 0 15px}.eyebrow{color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase}
